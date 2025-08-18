@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\EmailList;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 
 class EmailListController extends Controller
 {
@@ -35,8 +38,29 @@ class EmailListController extends Controller
         ]);
 
 
-        $file = $request->file('file');
-        $fileHandle = fopen($file->getRealPath(), 'r');
+        $emails = $this->getEmailsFromCsvFile($request->file('file'));
+
+
+        DB::transaction(function () use ($request, $emails){
+            
+            $emailList = EmailList::query()->create([
+            'title' => $request->title,
+        ]);
+
+            $emailList->subscribers()->createMany($emails);
+            
+        });
+
+
+
+        return to_route('email-list.index');
+    }
+
+
+
+    private function getEmailsFromCsvFile (UploadedFile $file): array
+    {
+         $fileHandle = fopen($file->getRealPath(), 'r');
         $itens = [];
 
         while (($row = fgetcsv($fileHandle,null, ',')) !== false){
@@ -49,16 +73,12 @@ class EmailListController extends Controller
                 'name' => $row[0],
                 'email' => $row[1]
             ];
+       
         }
 
         fclose($fileHandle);
-        $emailList = EmailList::query()->create([
-            'title' => $request->title,
-        ]);
 
-        $emailList->subscribers()->createMany($items);
-
-        return to_route('email-list.index');
+        return $items;
     }
 
     /**
