@@ -6,7 +6,7 @@
     </x-slot>
 
     <x-card>
-        <x-form :action="route('email-list.store')" post>
+        <x-form :action="route('email-list.store')" post enctype="multipart/form-data">
 
             <div>
                 <x-input-label for="title" :value="__('title')" />
@@ -15,8 +15,8 @@
             </div>
             
             <div>
-                <x-input-label for="file" :value="__('File List')" />
-                <x-text-input id="file" class="block mt-1 w-full" name="file" autofocus type="file" />
+                <x-input-label for="file" :value="__('List File')" />
+                <x-text-input id="file" class="block mt-1 w-full" name="file" accept=".csv" autofocus type="file" />
                 <x-input-error :messages="$errors->get('file')" class="mt-2" />
             </div>
 
