@@ -5,41 +5,46 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+    <x-card class="space-y-4">
+        @unless ($emailLists->isEmpty() && blank($search))
+        <div class="flex justify-between">
+            <x-link-button :href="route('email-list.create')">
+                {{__('Create a new email list!')}}
+            </x-link-button>
 
-                     @unless ($emailLists->isEmpty())
-                        <x-table :headers="[ '#', __('Email List'), __('Subscribers'), __('Actions'),
-                             
-                            
-                            ]">
-
-
-                            <x-slot name="body">
-                                @foreach ($emailLists as $list)
-                                    <tr>
-                                        <x-table.td> {{ $list->id}} </x-table.td>
-                                        <x-table.td> {{ $list->title}} </x-table.td>
-                                        <x-table.td> {{ $list->subscribers()->count() }} </x-table.td>
-                                    </tr>
-                                @endforeach
-
-                            </x-slot>
-
-                        </x-table>
-                        
-                        @else
-                            <div class="flex justify-center">
-                                <x-link-button :href="route('email-list.create')">
-                                    {{__('Crie sua primeira lista de email aqui!')}}
-                                </x-link-button>
-                            </div>
-                        
-                    @endunless
-                </div>
-            </div>
+            <x-form :action="route('email-list.index')" class="w-2/5">
+                <x-text-input name="search" :placeholder="__('Search')" :value="$search" />
+            </x-form>
         </div>
-    </div>
+
+        <x-table :headers="[ '#', __('Email List'), __('Subscribers'), __('Actions'),
+                                
+                                
+                                ]">
+
+
+            <x-slot name="body">
+                @foreach ($emailLists as $list)
+                <tr>
+                    <x-table.td> {{ $list->id}} </x-table.td>
+                    <x-table.td> {{ $list->title}} </x-table.td>
+                    <x-table.td> {{ $list->subscribers()->count() }} </x-table.td>
+                </tr>
+                @endforeach
+
+            </x-slot>
+
+        </x-table>
+
+        {{ $emailLists->links()}}
+
+        @else
+        <div class="flex justify-center">
+            <x-link-button :href="route('email-list.create')">
+                {{__('Create your firt email list!')}}
+            </x-link-button>
+        </div>
+
+        @endunless
+    </x-card>
 </x-layouts.app>
