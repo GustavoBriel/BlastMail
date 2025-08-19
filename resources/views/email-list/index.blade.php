@@ -10,15 +10,34 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
 
-                     @forelse($emailLists as $list)
-                        //fazer a paginação das listas
-                     @empty
+                     @unless ($emailLists->isEmpty())
+                        <x-table :headers="[ '#', __('Email List'), __('Subscribers'), __('Actions'),
+                             
+                            
+                            ]">
+
+
+                            <x-slot name="body">
+                                @foreach ($emailLists as $list)
+                                    <tr>
+                                        <x-table.td> {{ $list->id}} </x-table.td>
+                                        <x-table.td> {{ $list->title}} </x-table.td>
+                                        <x-table.td> {{ $list->subscribers()->count() }} </x-table.td>
+                                    </tr>
+                                @endforeach
+
+                            </x-slot>
+
+                        </x-table>
+                        
+                        @else
                             <div class="flex justify-center">
                                 <x-link-button :href="route('email-list.create')">
                                     {{__('Crie sua primeira lista de email aqui!')}}
                                 </x-link-button>
                             </div>
-                    @endforelse
+                        
+                    @endunless
                 </div>
             </div>
         </div>
